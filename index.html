@@ -1,0 +1,337 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="VG Kapadia - Premium men's clothing and custom tailoring in Mumbai. Explore sherwanis, kurtas, suits with 50+ years of heritage expertise.">
+  <meta name="keywords" content="custom suits, sherwanis, kurtas, men's clothing, VG Kapadia, tailoring, Mumbai">
+  <meta name="author" content="VG Kapadia Inc.">
+  <title>VG Kapadia - The Complete Clothing Showroom for Men</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:wght@400;700&family=Lora:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Lora', serif;
+      scroll-behavior: smooth;
+      background-color: #F8F1E9;
+    }
+    .logo-font {
+      font-family: 'Dancing Script', cursive;
+      font-weight: 700;
+      font-size: 2.5rem;
+    }
+    .heading-font {
+      font-family: 'Playfair Display', serif;
+    }
+    .hero-bg {
+      background-image: linear-gradient(rgba(74, 12, 30, 0.7), rgba(74, 12, 30, 0.7)), url('https://source.unsplash.com/random/1600x900/?heritage-menswear');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed; /* Parallax effect */
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #F8F1E9;
+      position: relative;
+      overflow: hidden;
+    }
+    .navbar {
+      transition: background-color 0.3s ease;
+    }
+    .navbar.scrolled {
+      background-color: rgba(26, 60, 60, 0.9);
+    }
+    .dropdown:hover .dropdown-menu {
+      display: block;
+    }
+    .carousel-item {
+      transition: transform 0.5s ease-in-out;
+    }
+    .animate-fade-in {
+      animation: fadeIn 1s ease-in;
+    }
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .hover-scale {
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+    .hover-scale:hover {
+      transform: scale(1.05);
+    }
+    .btn-gold { background-color: #C9A66B; color: #4A0C1E; }
+    .btn-gold:hover { background-color: #B8975E; }
+    .border-ornate { border: 3px solid #C9A66B; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+    .texture-bg {
+      background-image: linear-gradient(135deg, #F8F1E9 25%, #F0E6D2 25%, #F0E6D2 50%, #F8F1E9 50%, #F8F1E9 75%, #F0E6D2 75%, #F0E6D2);
+      background-size: 20px 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar fixed top-0 w-full z-50 bg-transparent text-white shadow-md">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <a href="#home" class="text-3xl logo-font text-gold-100">VG Kapadia</a>
+      <div class="flex space-x-6 items-center">
+        <a href="#home" class="hover:text-gold-100 transition">Home</a>
+        <a href="#measurement" class="hover:text-gold-100 transition">Measurement</a>
+        <a href="#shipping" class="hover:text-gold-100 transition">Shipping</a>
+        <a href="#contact" class="hover:text-gold-100 transition">Contact Us</a>
+        <a href="#login" class="btn-gold px-4 py-2 rounded-lg hover:bg-gold-600 transition">Login</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-bg" id="home">
+    <div class="animate-fade-in">
+      <h1 class="text-5xl md:text-6xl logo-font mb-4 text-gold-50">VG Kapadia</h1>
+      <p class="text-xl md:text-2xl heading-font mb-6 text-gold-50">Celebrating 50+ Years of Tailoring Excellence</p>
+      <p class="text-lg heading-font mb-6 text-gold-50">Discover Premium Men's Clothing: Sherwanis, Kurtas, Suits & More</p>
+      <a href="#collections" class="btn-gold px-6 py-3 rounded-lg hover:bg-gold-600 transition hover-scale">Shop Now</a>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="container mx-auto px-4 py-16 bg-cream-100 texture-bg" id="about">
+    <h2 class="text-4xl heading-font font-semibold text-center mb-8 animate-fade-in text-maroon-900">Welcome to VG Kapadia</h2>
+    <p class="text-lg text-center max-w-3xl mx-auto">
+      With over 50 years of experience, VG Kapadia stands as a beacon of premium and customized men's attire. Our master tailors infuse elegance into our exquisite fabrics, crafting suits, sherwanis, kurtas, tuxedos, trousers, and Indowestern outfits. We are committed to top-quality clothing at reasonable prices, delivered with exceptional service and a smile. Guided by the 3 F’s—<strong class="text-gold-700">Fabric, Fitting, and Finishing</strong>—we invite you to explore our legacy of innovation and style.
+    </p>
+  </section>
+
+  <!-- Collections Section -->
+  <section class="container mx-auto px-4 py-16 texture-bg" id="collections">
+    <h2 class="text-4xl heading-font font-semibold text-center mb-12 animate-fade-in text-maroon-900">Our Timeless Collections</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="relative bg-white rounded-lg shadow-lg overflow-hidden hover-scale border-ornate">
+        <img src="https://source.unsplash.com/random/600x400/?sherwani" alt="Amazing Sherwani" class="w-full h-64 object-cover">
+        <div class="p-6 text-maroon-900">
+          <h3 class="text-2xl heading-font font-semibold">Amazing Sherwani</h3>
+          <p class="text-gray-700">New Arrivals!</p>
+          <a href="#sherwanis" class="mt-4 inline-block text-gold-700 hover:text-gold-500">View Collection</a>
+        </div>
+      </div>
+      <div class="relative bg-white rounded-lg shadow-lg overflow-hidden hover-scale border-ornate">
+        <img src="https://source.unsplash.com/random/600x400/?kurta" alt="Classic Kurtas" class="w-full h-64 object-cover">
+        <div class="p-6 text-maroon-900">
+          <h3 class="text-2xl heading-font font-semibold">Classic & Elegant Kurtas</h3>
+          <p class="text-gray-700">Epitome of Comfort with Timeless and Modern Flair</p>
+          <a href="#kurtas" class="mt-4 inline-block text-gold-700 hover:text-gold-500">View Collection</a>
+        </div>
+      </div>
+      <div class="relative bg-white rounded-lg shadow-lg overflow-hidden hover-scale border-ornate">
+        <img src="https://source.unsplash.com/random/600x400/?indowestern" alt="Fusion Indowestern" class="w-full h-64 object-cover">
+        <div class="p-6 text-maroon-900">
+          <h3 class="text-2xl heading-font font-semibold">Fusion Indowestern</h3>
+          <p class="text-gray-700">Contemporary Elegance: Men's Indowestern Attire</p>
+          <a href="#indowestern" class="mt-4 inline-block text-gold-700 hover:text-gold-500">View Collection</a>
+        </div>
+      </div>
+      <div class="relative bg-white rounded-lg shadow-lg overflow-hidden hover-scale border-ornate">
+        <img src="https://source.unsplash.com/random/600x400/?kurta-set" alt="Kurta 3 Piece Set" class="w-full h-64 object-cover">
+        <div class="p-6 text-maroon-900">
+          <h3 class="text-2xl heading-font font-semibold">Kurta 3 Piece Set Collection</h3>
+          <a href="#kurta-3-piece" class="mt-4 inline-block text-gold-700 hover:text-gold-500">Shop Now</a>
+        </div>
+      </div>
+      <div class="relative bg-white rounded-lg shadow-lg overflow-hidden hover-scale border-ornate">
+        <img src="https://source.unsplash.com/random/600x400/?kurta-set" alt="Kurta 2 Piece Set" class="w-full h-64 object-cover">
+        <div class="p-6 text-maroon-900">
+          <h3 class="text-2xl heading-font font-semibold">Kurta 2 Piece Set</h3>
+          <a href="#kurta-2-piece" class="mt-4 inline-block text-gold-700 hover:text-gold-500">Shop Now</a>
+        </div>
+      </div>
+      <div class="relative bg-white rounded-lg shadow-lg overflow-hidden hover-scale border-ornate">
+        <img src="https://source.unsplash.com/random/600x400/?suit-tuxedo" alt="Suits & Tuxedos" class="w-full h-64 object-cover">
+        <div class="p-6 text-maroon-900">
+          <h3 class="text-2xl heading-font font-semibold">Suits & Tuxedos</h3>
+          <a href="#suits-tuxedos" class="mt-4 inline-block text-gold-700 hover:text-gold-500">View Collection</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Catalogue Section -->
+  <section class="container mx-auto px-4 py-16 bg-cream-100 texture-bg" id="catalogue">
+    <h2 class="text-4xl heading-font font-semibold text-center mb-12 animate-fade-in text-maroon-900">Product Catalogue</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-white p-6 rounded-lg shadow hover-scale border-ornate">
+        <img src="https://source.unsplash.com/random/400x300/?sherwani" alt="Maroon Embroidered Sherwani" class="w-full h-48 object-cover rounded">
+        <h3 class="text-xl heading-font font-semibold mt-4 text-maroon-900">Maroon Embroidered Sherwani</h3>
+        <p class="text-gray-700">Luxurious silk sherwani with gold zari work, perfect for weddings.</p>
+        <p class="text-lg font-semibold text-gold-700 mt-2">₹15,999</p>
+        <a href="#shop" class="btn-gold mt-4 inline-block px-4 py-2 rounded-lg hover:bg-gold-600">Shop Now</a>
+      </div>
+      <div class="bg-white p-6 rounded-lg shadow hover-scale border-ornate">
+        <img src="https://source.unsplash.com/random/400x300/?kurta" alt="Cream Kurta Pajama Set" class="w-full h-48 object-cover rounded">
+        <h3 class="text-xl heading-font font-semibold mt-4 text-maroon-900">Cream Kurta Pajama Set</h3>
+        <p class="text-gray-700">Elegant cotton kurta with churidar, ideal for festive occasions.</p>
+        <p class="text-lg font-semibold text-gold-700 mt-2">₹4,999</p>
+        <a href="#shop" class="btn-gold mt-4 inline-block px-4 py-2 rounded-lg hover:bg-gold-600">Shop Now</a>
+      </div>
+      <div class="bg-white p-6 rounded-lg shadow hover-scale border-ornate">
+        <img src="https://source.unsplash.com/random/400x300/?suit" alt="Navy Indowestern Suit" class="w-full h-48 object-cover rounded">
+        <h3 class="text-xl heading-font font-semibold mt-4 text-maroon-900">Navy Indowestern Suit</h3>
+        <p class="text-gray-700">Modern fusion attire with intricate embroidery.</p>
+        <p class="text-lg font-semibold text-gold-700 mt-2">₹12,499</p>
+        <a href="#shop" class="btn-gold mt-4 inline-block px-4 py-2 rounded-lg hover:bg-gold-600">Shop Now</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section class="bg-cream-200 py-16 texture-bg" id="services">
+    <div class="container mx-auto px-4">
+      <h2 class="text-4xl heading-font font-semibold text-center mb-12 animate-fade-in text-maroon-900">Why Choose VG Kapadia?</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="text-center p-6 bg-white rounded-lg shadow hover-scale border-ornate">
+          <h3 class="text-xl heading-font font-semibold mb-4 text-gold-700">World Wide Shipping</h3>
+          <p>We ship to 130 countries internationally and 511 locations in India.</p>
+        </div>
+        <div class="text-center p-6 bg-white rounded-lg shadow hover-scale border-ornate">
+          <h3 class="text-xl heading-font font-semibold mb-4 text-gold-700">Comfort Fitting</h3>
+          <p>Achieve good fitting through careful work and patience.</p>
+        </div>
+        <div class="text-center p-6 bg-white rounded-lg shadow hover-scale border-ornate">
+          <h3 class="text-xl heading-font font-semibold mb-4 text-gold-700">Support</h3>
+          <p>Customers can seek assistance through email, phone, or WhatsApp.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="container mx-auto px-4 py-16 bg-cream-100 texture-bg" id="testimonials">
+    <h2 class="text-4xl heading-font font-semibold text-center mb-12 animate-fade-in text-maroon-900">What Our Customers Say</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-white p-6 rounded-lg shadow hover-scale border-ornate">
+        <p class="text-gray-700 italic">"Nice and helpful staff. Great place to buy ethnic wear."</p>
+        <p class="mt-4 font-semibold text-maroon-900">Parth Nayak</p>
+      </div>
+      <div class="bg-white p-6 rounded-lg shadow hover-scale border-ornate">
+        <p class="text-gray-700 italic">"Best wedding shopping place with best price."</p>
+        <p class="mt-4 font-semibold text-maroon-900">Anand Shah</p>
+      </div>
+      <div class="bg-white p-6 rounded-lg shadow hover-scale border-ornate">
+        <p class="text-gray-700 italic">"Best apparels for traditional purpose with the latest fashion."</p>
+        <p class="mt-4 font-semibold text-maroon-900">Mohit Agrawal</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery Section -->
+  <section class="bg-cream-200 py-16 texture-bg" id="gallery">
+    <div class="container mx-auto px-4">
+      <h2 class="text-4xl heading-font font-semibold text-center mb-12 animate-fade-in text-maroon-900">Gallery</h2>
+      <div class="flex space-x-4 overflow-x-auto">
+        <img src="https://source.unsplash.com/random/400x300/?fabric" alt="Fabric Sample" class="carousel-item h-64 rounded-lg object-cover hover-scale">
+        <img src="https://source.unsplash.com/random/400x300/?store" alt="Store Sample" class="carousel-item h-64 rounded-lg object-cover hover-scale">
+        <img src="https://source.unsplash.com/random/400x300/?gallery" alt="Gallery Sample" class="carousel-item h-64 rounded-lg object-cover hover-scale">
+      </div>
+    </div>
+  </section>
+
+  <!-- Login Section -->
+  <section class="container mx-auto px-4 py-16 bg-cream-100 texture-bg" id="login">
+    <h2 class="text-3xl heading-font font-semibold text-center mb-8 animate-fade-in text-maroon-900">Member Login</h2>
+    <p class="text-center mb-6 text-gray-700">Login For Online Shopping</p>
+    <form class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg border-ornate">
+      <div class="mb-6">
+        <label for="loginId" class="block text-sm font-medium text-gray-700">Login Id</label>
+        <input type="text" id="loginId" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gold-700" required>
+      </div>
+      <div class="mb-6">
+        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+        <input type="password" id="password" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gold-700" required>
+      </div>
+      <button type="submit" class="w-full btn-gold px-4 py-3 rounded-lg hover:bg-gold-600 transition">Login</button>
+    </form>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-maroon-900 text-white py-12">
+    <div class="container mx-auto px-4 text-center">
+      <h3 class="text-2xl heading-font font-semibold mb-4 text-gold-100">VG Kapadia</h3>
+      <p class="mb-6">Celebrating 50+ Years of Tailored Elegance</p>
+      <div class="flex justify-center space-x-6 mb-6">
+        <a href="#home" class="hover:text-gold-100">Home</a>
+        <a href="#faq" class="hover:text-gold-100">FAQ</a>
+        <a href="#terms" class="hover:text-gold-100">Terms & Conditions</a>
+        <a href="#measurement" class="hover:text-gold-100">Measurement</a>
+        <a href="#payment" class="hover:text-gold-100">How to Pay</a>
+        <a href="#shipping" class="hover:text-gold-100">Shipping</a>
+        <a href="#contact" class="hover:text-gold-100">Contact Us</a>
+      </div>
+      <p>Copyright © VG Kapadia Inc. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      const navbar = document.querySelector('.navbar');
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    // Carousel functionality
+    const carouselItems = document.querySelectorAll('.carousel-item');
+    let currentIndex = 0;
+    setInterval(() => {
+      carouselItems.forEach((item, index) => {
+        item.style.transform = `translateX(-${currentIndex * 100}%)`;
+      });
+      currentIndex = (currentIndex + 1) % carouselItems.length;
+    }, 4000);
+  </script>
+</body>
+</html>
